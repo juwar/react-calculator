@@ -30,7 +30,7 @@ const Calculator = () => {
   };
 
   const count = (val) => {
-    let temp = val.replace("x", "*").replace("%", "/100").replace("=", "");
+    let temp = val.replace(/x/g, "*").replace(/%/g, "/100").replace(/=/g, "");
     // console.log("🚀 ~ file: index.js ~ line 11 ~ count ~ temp", temp);
     let last = temp[temp.length - 1];
     // console.log("🚀 ~ file: index.js ~ line 13 ~ count ~ last", last);
@@ -58,11 +58,15 @@ const Calculator = () => {
   };
 
   const actionBtn = (val) => {
-    if (val?.action === BTN_ACTIONS.ADD && equal === false) {
+    if (
+      val?.action === BTN_ACTIONS.ADD &&
+      equal === false &&
+      calcDisplay.length < 17
+    ) {
       let display = `${calcDisplay}${val?.display}`;
       if (val.display === "%") {
         display = display.replace(
-          `${getNumberFrontPercent(calcDisplay)}%`,
+          new RegExp(`${getNumberFrontPercent(calcDisplay)}%`, "g"),
           `${eval(`${getNumberFrontPercent(calcDisplay)} / 100`)}`
         );
       }
@@ -102,7 +106,14 @@ const Calculator = () => {
   return (
     <div className="Calculator">
       <div className="calculator__header">
-        <h1>End Result : {equal ? result.replace("=", "") : ""}</h1>
+        <h2>
+          End Result :{" "}
+          {equal
+            ? result.length > 12
+              ? Number(result.replace(/=/g, "")).toExponential(7)
+              : result.replace(/=/g, "")
+            : ""}
+        </h2>
       </div>
       <div
         className="calculator__main"
@@ -117,7 +128,9 @@ const Calculator = () => {
             {calcDisplay}
           </span>
           <span className={`sub__result ${equal ? "sub__result__equal" : ""}`}>
-            {result}
+            {result.length > 12
+              ? `=${Number(result.replace(/=/g, "")).toExponential(7)}`
+              : result}
           </span>
         </div>
         <div className="button__container">

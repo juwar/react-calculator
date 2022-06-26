@@ -12,8 +12,8 @@
 
 .calculator__main {
   background-color: white;
-  /* width: 20rem;
-  height: 60rem; */
+  width: 20rem;
+  /* height: 60rem; */
   display: flex;
   flex-direction: column;
 }
@@ -46,7 +46,6 @@
 }
 
 .button__container {
-  width: 20rem;
   height: 30rem;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
