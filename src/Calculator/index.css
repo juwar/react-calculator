@@ -4,6 +4,16 @@
   cursor: default;
 }
 
+.disable__select {
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}
+
+.btn__op {
+  color: #3366ff;
+}
+
 .calculator__header {
   justify-content: center;
   align-items: center;
@@ -20,7 +30,7 @@
 
 .result__container {
   background-color: #373737;
-  height: 4rem;
+  min-height: 4rem;
   display: flex;
   justify-content: end;
   align-items: flex-end;
@@ -28,6 +38,13 @@
   padding: 1rem;
   font-size: 1.8rem;
   color: white;
+}
+
+.main__result {
+  display: flex;
+  flex: 1;
+  word-break: break-all;
+  text-align: end;
 }
 
 .main__result__equal {

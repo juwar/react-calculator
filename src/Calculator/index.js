@@ -61,7 +61,7 @@ const Calculator = () => {
     if (
       val?.action === BTN_ACTIONS.ADD &&
       equal === false &&
-      calcDisplay.length < 17
+      calcDisplay.length < 36
     ) {
       let display = `${calcDisplay}${val?.display}`;
       if (val.display === "%") {
@@ -133,11 +133,13 @@ const Calculator = () => {
               : result}
           </span>
         </div>
-        <div className="button__container">
+        <div className="button__container disable__select">
           {btns.map((item, index) => {
             return (
               <div
-                className="button__row"
+                className={`button__row ${
+                  item.class !== "" ? `${item.class}` : ""
+                }`}
                 key={index}
                 onClick={() => actionBtn(item)}
               >
