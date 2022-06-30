@@ -28,7 +28,7 @@
   flex-direction: column;
 }
 
-.result__container {
+.display__container {
   background-color: #373737;
   min-height: 4rem;
   display: flex;
@@ -40,24 +40,24 @@
   color: white;
 }
 
-.main__result {
+.main__display {
   display: flex;
   flex: 1;
   word-break: break-all;
   text-align: end;
 }
 
-.main__result__equal {
+.main__display__equal {
   font-size: 1.2rem;
   color: white;
 }
 
-.sub__result {
+.sub__display {
   color: gray;
   font-size: 1.2rem;
 }
 
-.sub__result__equal {
+.sub__display__equal {
   font-size: 1.8rem;
   color: white;
 }

@@ -8,11 +8,13 @@ const Calculator = () => {
   const [equal, setEqual] = useState(false);
 
   const btnsRef = useRef(null);
+  const operator = ["x", "+", "/", "-", "%", "=", "*"];
 
   useEffect(() => {
     btnsRef.current.focus();
   }, []);
 
+  //Get number value front of percent operator
   const getNumberFrontPercent = (value) => {
     const arrNum = [];
     for (let i = 0; i < value.length; i++) {
@@ -29,20 +31,20 @@ const Calculator = () => {
     return value?.substring(max + 1, value.length);
   };
 
+  //Function to count entered number
   const count = (val) => {
     let temp = val.replace(/x/g, "*").replace(/%/g, "/100").replace(/=/g, "");
-    // console.log("🚀 ~ file: index.js ~ line 11 ~ count ~ temp", temp);
     let last = temp[temp.length - 1];
-    // console.log("🚀 ~ file: index.js ~ line 13 ~ count ~ last", last);
-    if (last === "*" || last === "/" || last === "+" || last === "-") {
-      return temp.length > 1
-        ? `=${eval(temp.substring(0, temp.length - 1))}`
-        : "";
-    } else {
-      return temp.length > 1 ? `=${eval(temp)}` : "";
+    let res = "";
+    if (temp.length > 0) {
+      res = operator.includes(last)
+        ? `${eval(temp.substring(0, temp.length - 1))}`
+        : `${eval(temp)}`;
     }
+    return parseFloat(Number(res).toFixed(7));
   };
 
+  //function to handle key press from keyboard input
   const handleKeyPress = (e) => {
     const key =
       e.key === "Backspace"
@@ -53,50 +55,53 @@ const Calculator = () => {
         ? "="
         : e.key;
     const btn = btns.filter((item) => item.display === key);
-    // console.log("key", e.key);
     actionBtn(btn[0]);
   };
 
   const actionBtn = (val) => {
-    if (
-      val?.action === BTN_ACTIONS.ADD &&
-      equal === false &&
-      calcDisplay.length < 36
-    ) {
+    if (val?.action === BTN_ACTIONS.ADD && calcDisplay.length < 36) {
       let display = `${calcDisplay}${val?.display}`;
-      if (val.display === "%") {
+
+      // funtion to replace display with new input number when equal already tigered
+      if (equal === true) {
+        display = `${val?.display}`;
+        setEqual(false);
+      }
+
+      //function to replace number in percent with result of percent
+      if (val.display === "%" && display.length > 1) {
         display = display.replace(
           new RegExp(`${getNumberFrontPercent(calcDisplay)}%`, "g"),
           `${eval(`${getNumberFrontPercent(calcDisplay)} / 100`)}`
         );
       }
-      // console.log(display);
+
       if (
-        display[0] === "x" ||
-        display[0] === "/" ||
-        display[0] === "+" ||
-        display[0] === "-" ||
-        display[0] === "%" ||
-        display[0] === "="
+        //Check first input not a operator
+        !operator.includes(display[0]) &&
+        //Check last input after operator, not an operator too
+        !(
+          operator.includes(display[display.length - 1]) &&
+          operator.includes(display[display.length - 2])
+        )
       ) {
-      } else {
-        setResult(count(`${calcDisplay}${val?.display}`));
+        setResult(count(display));
         setCalcDisplay(display);
       }
     }
-    if (val?.action === BTN_ACTIONS.DELETE) {
-      setCalcDisplay(calcDisplay.substring(0, calcDisplay.length - 1));
-      setResult(
-        calcDisplay.length > 1
-          ? count(calcDisplay.substring(0, calcDisplay.length - 1))
-          : ""
-      );
+
+    if (val?.action === BTN_ACTIONS.DELETE && equal === false) {
+      let newData = calcDisplay.substring(0, calcDisplay.length - 1);
+      setCalcDisplay(newData);
+      setResult(calcDisplay.length > 1 ? count(newData) : "");
     }
+
     if (val?.action === BTN_ACTIONS.DELETE_ALL) {
       setCalcDisplay("");
       setResult("");
       setEqual(false);
     }
+
     if (val?.action === BTN_ACTIONS.CALC && equal === false) {
       setResult(count(calcDisplay));
       setEqual(true);
@@ -109,9 +114,9 @@ const Calculator = () => {
         <h2>
           End Result :{" "}
           {equal
-            ? result.length > 12
-              ? Number(result.replace(/=/g, "")).toExponential(7)
-              : result.replace(/=/g, "")
+            ? result.toString().length > 12
+              ? result.toExponential()
+              : result
             : ""}
         </h2>
       </div>
@@ -121,16 +126,17 @@ const Calculator = () => {
         onKeyDown={(e) => handleKeyPress(e)}
         ref={btnsRef}
       >
-        <div className="result__container">
+        <div className="display__container">
           <span
-            className={`main__result ${equal ? "main__result__equal" : ""}`}
+            className={`main__display ${equal ? "main__display__equal" : ""}`}
           >
             {calcDisplay}
           </span>
-          <span className={`sub__result ${equal ? "sub__result__equal" : ""}`}>
-            {result.length > 12
-              ? `=${Number(result.replace(/=/g, "")).toExponential(7)}`
-              : result}
+          <span
+            className={`sub__display ${equal ? "sub__display__equal" : ""}`}
+          >
+            {typeof result === "number" ? "=" : ""}
+            {result.toString().length > 12 ? result.toExponential() : result}
           </span>
         </div>
         <div className="button__container disable__select">
