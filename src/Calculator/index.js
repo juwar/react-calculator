@@ -41,7 +41,10 @@ const Calculator = () => {
         ? `${eval(temp.substring(0, temp.length - 1))}`
         : `${eval(temp)}`;
     }
-    return parseFloat(Number(res).toFixed(7));
+    const exponentialFormat =
+      Number(res).toLocaleString("fullwide", { useGrouping: false });
+    res = exponentialFormat !== '0' ? `${exponentialFormat}` : res;
+    return parseFloat(Number(res).toFixed(8));
   };
 
   //function to handle key press from keyboard input
@@ -61,6 +64,7 @@ const Calculator = () => {
   const actionBtn = (val) => {
     if (val?.action === BTN_ACTIONS.ADD && calcDisplay.length < 36) {
       let display = `${calcDisplay}${val?.display}`;
+      let lastDisplay = display[display.length - 1];
 
       // funtion to replace display with new input number when equal already tigered
       if (equal === true) {
@@ -69,7 +73,7 @@ const Calculator = () => {
       }
 
       //function to replace number in percent with result of percent
-      if (val.display === "%" && display.length > 1) {
+      if (val.display === "%" && display.length > 1 && lastDisplay === "%") {
         display = display.replace(
           new RegExp(`${getNumberFrontPercent(calcDisplay)}%`, "g"),
           `${eval(`${getNumberFrontPercent(calcDisplay)} / 100`)}`
